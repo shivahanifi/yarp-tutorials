@@ -1,9 +1,9 @@
-This is the tutorial in which I explain how I started to use Python files with YARP.
+This is the tutorial in which I explain how I started to use YARP from Python.
 
 ## How to run a ``.py`` file with YARP?
 
 - ### YARP installed seperately
-    In this case, you have to install the Python bindings. Find it in this [link](https://www.yarp.it/git-master/yarp_swig.html#yarp_swig_python).
+    In this case, you have to use ``SWIG``. Find the steps in this [link](https://www.yarp.it/git-master/yarp_swig.html#yarp_swig_python).
 - ### YARP installed using [robotology-superbuild](https://github.com/robotology/robotology-superbuild)
   
     ### Step 1 
