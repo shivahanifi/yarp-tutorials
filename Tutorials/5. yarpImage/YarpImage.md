@@ -15,13 +15,13 @@ import yarp
 ```
 yarp.Network.init()
 ```
-1. ### Run Only The Main
+3. ### Run Only The Main
    To allow or prevent parts of code from being run when the modules are imported. 
    It ensures that variables that are created, functions that are called, operations that are done, etc only when you directly run file, not when you import it into another.
 ```
 if __name__ == '__main__':
 ```
-1. ### Ports
+4. ### Ports
    An input port is typically block buffered by default, which means that on any read, the buffer is filled with immediately-available bytes to speed up future reads. Buffered port is used when you want to send and receive messages in the background without having to stop your processing.
 
    Follow 3 steps for each port:
@@ -56,7 +56,8 @@ if __name__ == '__main__':
     in_buf_image.resize(image_w, image_h)
     in_buf_image.setExternal(in_buf_array.data, in_buf_array.shape[1], in_buf_array.shape[0])
 ```
-1. ### Preparing Output Image Buffer
+6. ### Preparing Output Image Buffer
+   - Here with the `` out_buf_image.setExternal`` it is demonstrating the portion of the memory that contains the image, which actually is the `` yarp.ImageRgb()``.
    
      (do it only once)
 ```
@@ -65,11 +66,12 @@ if __name__ == '__main__':
     out_buf_array = np.zeros((image_h, image_w, 3), dtype = np.uint8)
     out_buf_image.setExternal(out_buf_array.data, out_buf_array.shape[1], out_buf_array.shape[0])
 ```
-1. ### Receiving/Sending Image
+7. ### Receiving/Sending Image
    Here the code is in a while loop. 
    - It reads the data from the port
    - If it receives images prints the "Image received!" message. Otherwise it prints "No image received!".
    - Copies the received image.
+   - With ``assert`` it is checking if the received image is in the right memory loaction.
    - Prints the shape of the image.
    - Sends the same image to the output.
    - Finally closes the ports.
