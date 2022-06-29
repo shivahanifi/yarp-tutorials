@@ -1,0 +1,50 @@
+<application>
+<name>yarpopenpose test</name>
+<version>1.0</version>
+
+<!-- Modules -->
+	<module>
+		<name>yarpdev</name>
+		<parameters>--from /home/shanifi/code/human-sensing/yarpOpenPose/app/conf/realsense_conf.ini</parameters>
+		<node>localhost</node>
+	</module>
+
+	<module>
+		<name>yarpOpenPose</name>
+		<parameters> --from /home/shanifi/code/human-sensing/yarpOpenPose/app/conf/yarpopenpose.ini</parameters>
+		<node>localhost</node>
+	</module>
+
+	<module>
+		<name>yarpview</name>
+		<parameters>--name /view/rgb --w 640 --h 480</parameters>
+		<node>localhost</node>
+	</module>
+
+	<module>
+		<name>yarpview</name>
+		<parameters>--name /view/skeleton --w 640 --h 480</parameters>
+		<node>localhost</node>
+	</module>
+
+<!-- Connections -->
+
+	<connection>
+		<from>/depthCamera/rgbImage:o</from>
+		<to>/yarpOpenPose/image:i</to>
+		<protocol>fast_tcp</protocol>
+	</connection>
+	
+	<connection>
+		<from>/depthCamera/rgbImage:o</from>
+		<to>/view/rgb</to>
+		<protocol>fast_tcp</protocol>
+	</connection>
+
+	<connection>
+		<from>/yarpOpenPose/image:o</from>
+		<to>/view/skeleton</to>
+		<protocol>fast_tcp</protocol>
+	</connection>
+
+</application>
