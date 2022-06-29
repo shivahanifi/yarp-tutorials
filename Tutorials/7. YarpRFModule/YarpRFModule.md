@@ -31,22 +31,31 @@ The module will start executing the function ``updateModule()`` with periodicity
         return true;
     }
 ```
+``yInfo()`` is a mechanism to help you debug your distributed application. While you can simply use ``printf`` or ``std::cout`` methods to debug your application locally, if you use the functionalities offered, YARP will collect and show several additional information, including system and network time, file, line, thread id, etc., and eventually forward them to yarplogger.
 
-
-- To terminate the module hit ``ctrl+c`` at the terminal.
+- To terminate the module hit ``ctrl+c`` at the terminal. 
 
 ## C++ File
 Here we have an executable which performs periodic activities. In addition, our module can be terminated smoothly by sending a ``ctrl+C`` signal. This is important if we want to perform shutdown operations like parking the robot, turning off the motors etc.
+- ### Include headerfiles
 
 ```
 #include <iostream>
 #include <yarp/os/RFModule.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/LogStream.h>
-
+```
+- ### Namespaces
+```
 using namespace std;
 using namespace yarp::os;
-
+```
+- ### Core
+    - #### Inheritence
+    Here we create a class called `MyModule` and then it inherits all the public methods from the class called `RFModule`.
+    - #### Create an Object
+   with this line `RpcServer handlerPort;` we are creating an object called handlePort out of the `RpcServer` class. 
+```
 class MyModule:public RFModule
 {
     RpcServer handlerPort; //a port to handle messages
@@ -160,3 +169,45 @@ If we take a look at the ``configure`` function defined inside the C++ source fi
 ./tutorial_rfmodule-simple --period 2.0
 ```
 2. ### Adding an interface to respond to commands from a port
+
+We now add code to open the port, and configure the module to dispatch messages received from the port to a respond function.
+  
+  - Add the following code within `configure' function:
+```
+    handlerPort.open("/myModule");
+    attach(handlerPort);
+```
+  -  Add the following function:
+  ```
+      bool respond(const Bottle& command, Bottle& reply)
+    {
+        yInfo()<<"Responding to command";
+
+        //parse input
+        if (command.check("period"))
+        {
+            period=command.find("period").asDouble();
+            reply.addString("ack");
+            return true;
+
+        }
+
+        // dispatch received data to the RFModule::respond() function
+        // this function handles the quit message
+        return RFModule::respond(command, reply);
+    }
+  ```
+  Now all messages received from the port MyModule will be dispatched to the method respond. We can parse the message and modify the behavior of the module accordingly. Notice that by default the RFModule will automatically shutdown when a quit message is received.
+
+  Note: Let the code run and in another terminal use `yarp rpc`.
+  The result would look like:
+  ```
+  $ yarp rpc /myModule
+>>period 2
+Response: ack
+>>quit
+Response: [bye]
+>>
+  ```
+
+
